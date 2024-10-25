@@ -16,14 +16,13 @@ public class TextMessageController(ITelegramBotClient telegramBotClient)
             case "/start":
 
                 // Объект, представляющий кнопки
-                var buttons = new List<InlineKeyboardButton[]>
-                {
-                    new[]
+                var buttons = new List<InlineKeyboardButton[]>();
+                buttons.Add(new[]
                 {
                     InlineKeyboardButton.WithCallbackData($" Русский" , $"ru"),
-                    InlineKeyboardButton.WithCallbackData($" English" , $"en")
-                }
-                };
+                    InlineKeyboardButton.WithCallbackData($" English" , $"en"),
+                    InlineKeyboardButton.WithCallbackData($" Français" , $"fr")
+                });
 
                 // передаем кнопки вместе с сообщением (параметр ReplyMarkup)
                 await _telegramClient.SendTextMessageAsync(message.Chat.Id, $"<b>  Наш бот превращает аудио в текст.</b> {Environment.NewLine}" +

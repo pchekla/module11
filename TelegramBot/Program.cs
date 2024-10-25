@@ -12,7 +12,7 @@ class Program
 {
     public static async Task Main()
     {
-        Console.OutputEncoding = Encoding.Unicode;
+        Console.OutputEncoding = Encoding.UTF8;
 
         // Объект, отвечающий за постоянный жизненный цикл приложения
         var host = new HostBuilder()
@@ -50,10 +50,12 @@ class Program
     {
         return new AppSettings()
         {
-            DownloadsFolder = "C:\\Users\\evmor\\Downloads",
-            BotToken = "{{BOT_TOKEN}}",
+            DownloadsFolder = "/home/user/",
+            BotToken = "7866336182:AAGMkvbMZSk_-ZAeoeL5eBbg-CpUfSELLmc",
             AudioFileName = "audio",
             InputAudioFormat = "ogg",
+            OutputAudioFormat = "wav", // Новое поле
+            InputAudioBitrate = 48000,
         };
     }
 }

@@ -22,6 +22,7 @@ public class InlineKeyboardController(ITelegramBotClient telegramBotClient, ISto
             {
                 "ru" => " Русский",
                 "en" => " Английский",
+                "fr" => " Французский",
                 _ => String.Empty
             };
 

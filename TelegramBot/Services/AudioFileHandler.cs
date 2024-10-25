@@ -1,5 +1,6 @@
 using Bot.Configuration;
 using Telegram.Bot;
+using Bot.Utilities;
 
 namespace Bot.Services;
 
@@ -27,7 +28,16 @@ public class AudioFileHandler(ITelegramBotClient telegramBotClient, AppSettings 
 
     public string Process(string languageCode)
     {
-        // Метод пока не реализован
-        throw new NotImplementedException();
+        string inputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}.{_appSettings.InputAudioFormat}");
+        string outputAudioPath = Path.Combine(_appSettings.DownloadsFolder, $"{_appSettings.AudioFileName}.{_appSettings.OutputAudioFormat}");
+
+        Console.WriteLine("Начинаем конвертацию...");
+        AudioConverter.TryConvert(inputAudioPath, outputAudioPath);
+        Console.WriteLine("Файл конвертирован");
+
+        Console.WriteLine("Начинаем распознавание...");
+        var speechText = SpeechDetector.DetectSpeech(outputAudioPath, _appSettings.InputAudioBitrate, languageCode);
+        Console.WriteLine("Файл распознан.");
+        return speechText;
     }
 }
