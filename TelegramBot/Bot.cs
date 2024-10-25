@@ -5,7 +5,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace TelegramBot;
+namespace Bot;
 internal class Bot : BackgroundService
 {
     private ITelegramBotClient _telegramClient;
@@ -38,7 +38,8 @@ internal class Bot : BackgroundService
         // Обрабатываем входящие сообщения из Telegram Bot API: https://core.telegram.org/bots/api#message
         if (update.Type == UpdateType.Message)
         {
-            await _telegramClient.SendTextMessageAsync(update.Message.Chat.Id, "Вы отправили сообщение", cancellationToken: cancellationToken);
+            Console.WriteLine($"Получено сообщение {update.Message.Text}");
+            await _telegramClient.SendTextMessageAsync(update.Message.Chat.Id, $"Вы отправили сообщение {update.Message.Text}", cancellationToken: cancellationToken);
             return;
         }
     }

@@ -1,10 +1,33 @@
-using System;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Telegram.Bot;
 
-namespace TelegramBot;
+namespace Bot;
 
 class Program
 {
-    static void Main(string[] args)
+    public static async Task Main()
     {
+        Console.OutputEncoding = Encoding.Unicode;
+
+        // Объект, отвечающий за постоянный жизненный цикл приложения
+        var host = new HostBuilder()
+            .ConfigureServices((hostContext, services) => ConfigureServices(services)) // Задаем конфигурацию
+            .UseConsoleLifetime() // Позволяет поддерживать приложение активным в консоли
+            .Build(); // Собираем
+
+        Console.WriteLine("Сервис запущен");
+        // Запускаем сервис
+        await host.RunAsync();
+        Console.WriteLine("Сервис остановлен");
+    }
+
+    static void ConfigureServices(IServiceCollection services)
+    {
+        // Регистрируем объект TelegramBotClient c токеном подключения
+        services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient("7439968622:AAFaJdYZV_atsiYsd8N-SJKZYQn-dPkhA1k"));
+        // Регистрируем постоянно активный сервис бота
+        services.AddHostedService<Bot>();
     }
 }
