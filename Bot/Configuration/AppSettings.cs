@@ -2,31 +2,11 @@ namespace Bot.Configuration;
 
 public class AppSettings
 {
-    /// <summary>
-    /// Токен Telegram API
-    /// </summary>
-    public string? BotToken { get; set; }
 
-    /// <summary>
-    /// Папка загрузки аудио файлов
-    /// </summary>
-    public string? DownloadsFolder { get; set; }
-    /// <summary>
-    /// Имя файла при загрузке
-    /// </summary>
-    public string? AudioFileName { get; set; }
-    /// <summary>
-    /// Формат аудио при загрузке
-    /// </summary>
-    public string? InputAudioFormat { get; set; }
-
-    /// <summary>
-    /// Формат аудио при загрузке
-    /// </summary>
-    public string? OutputAudioFormat { get; set; }
-
-    /// <summary>
-    /// Битрейт аудио при загрузке
-    /// </summary>
-    public float InputAudioBitrate { get; set; }
+    public string DownloadsFolder { get; set; }
+    public string BotToken { get; set; }
+    public string AudioFileName { get; set; }
+    public string InputAudioFormat { get; set; }
+    public string OutputAudioFormat { get; set; }
+    public long InputAudioBitrate { get; set; }
 }

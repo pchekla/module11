@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
@@ -6,56 +7,43 @@ using Bot.Controllers;
 using Bot.Services;
 using Bot.Configuration;
 
-namespace Bot;
-
-class Program
+namespace Bot
 {
-    public static async Task Main()
+    class Program
     {
-        Console.OutputEncoding = Encoding.UTF8;
-
-        // Объект, отвечающий за постоянный жизненный цикл приложения
-        var host = new HostBuilder()
-            .ConfigureServices((hostContext, services) => ConfigureServices(services)) // Задаем конфигурацию
-            .UseConsoleLifetime() // Позволяет поддерживать приложение активным в консоли
-            .Build(); // Собираем
-
-        Console.WriteLine("Сервис запущен");
-        // Запускаем сервис
-        await host.RunAsync();
-        Console.WriteLine("Сервис остановлен");
-    }
-
-    static void ConfigureServices(IServiceCollection services)
-    {
-
-        AppSettings appSettings = BuildAppSettings();
-        services.AddSingleton(appSettings);
-
-        services.AddSingleton<IStorage, MemoryStorage>();
-
-        services.AddSingleton<IFileHandler, AudioFileHandler>();
-
-        // Подключаем контроллеры сообщений и кнопок
-        services.AddTransient<DefaultMessageController>();
-        services.AddTransient<VoiceMessageController>();
-        services.AddTransient<TextMessageController>();
-        services.AddTransient<InlineKeyboardController>();
-
-        services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient(""));
-        services.AddHostedService<Bot>();
-    }
-
-    static AppSettings BuildAppSettings()
-    {
-        return new AppSettings()
+        public static async Task Main()
         {
-            DownloadsFolder = "/home/user/",
-            BotToken = "token",
-            AudioFileName = "audio",
-            InputAudioFormat = "ogg",
-            OutputAudioFormat = "wav", // Новое поле
-            InputAudioBitrate = 48000,
-        };
+            Console.OutputEncoding = Encoding.UTF8;
+
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                })
+                .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
+                .UseConsoleLifetime()
+                .Build();
+
+            Console.WriteLine("Сервис запущен");
+            await host.RunAsync();
+            Console.WriteLine("Сервис остановлен");
+        }
+
+        static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        {
+            var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+            services.AddSingleton(appSettings);
+
+            services.AddSingleton<IStorage, MemoryStorage>();
+            services.AddSingleton<IFileHandler, AudioFileHandler>();
+
+            services.AddTransient<DefaultMessageController>();
+            services.AddTransient<VoiceMessageController>();
+            services.AddTransient<TextMessageController>();
+            services.AddTransient<InlineKeyboardController>();
+
+            services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient(appSettings.BotToken));
+            services.AddHostedService<Bot>();
+        }
     }
 }
