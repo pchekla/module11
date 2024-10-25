@@ -22,7 +22,8 @@ public class VoiceMessageController
         if (message == null)
             throw new ArgumentNullException(nameof(message)); // Проверка на null для message
 
-        var fileId = message.Voice?.FileId;
+        var fileId = message.Voice?.FileId ?? throw new ArgumentNullException(nameof(message.Voice), "Voice не может быть null.");
+
         if (fileId == null)
             return; // Если fileId равен null, завершаем метод
 
