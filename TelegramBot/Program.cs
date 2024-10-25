@@ -6,7 +6,6 @@ using Bot.Controllers;
 using Bot.Services;
 using Bot.Configuration;
 
-
 namespace Bot;
 
 class Program
@@ -35,6 +34,8 @@ class Program
 
         services.AddSingleton<IStorage, MemoryStorage>();
 
+        services.AddSingleton<IFileHandler, AudioFileHandler>();
+
         // Подключаем контроллеры сообщений и кнопок
         services.AddTransient<DefaultMessageController>();
         services.AddTransient<VoiceMessageController>();
@@ -49,7 +50,10 @@ class Program
     {
         return new AppSettings()
         {
-            BotToken = "XXXXXX"
+            DownloadsFolder = "C:\\Users\\evmor\\Downloads",
+            BotToken = "{{BOT_TOKEN}}",
+            AudioFileName = "audio",
+            InputAudioFormat = "ogg",
         };
     }
 }
