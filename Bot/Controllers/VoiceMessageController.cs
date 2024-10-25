@@ -20,15 +20,21 @@ public class VoiceMessageController
     public async Task Handle(Message message, CancellationToken ct)
     {
         if (message == null)
-            throw new ArgumentNullException(nameof(message)); // Проверка на null для message
+            throw new ArgumentNullException(nameof(message));
 
-        var fileId = message.Voice?.FileId ?? throw new ArgumentNullException(nameof(message.Voice), "Voice не может быть null.");
+        // Проверка на наличие объекта Chat
+        if (message.Chat == null)
+            throw new ArgumentNullException(nameof(message.Chat), "Chat не может быть null.");
 
-        if (fileId == null)
-            return; // Если fileId равен null, завершаем метод
+        // Явная проверка на наличие объекта Voice
+        if (message.Voice == null)
+            throw new ArgumentNullException(nameof(message.Voice), "Voice не может быть null.");
+
+        var voice = message.Voice; // Теперь мы уверены, что voice не равен null
+        var fileId = voice.FileId ?? throw new ArgumentNullException(nameof(voice.FileId), "FileId не может быть null.");
 
         await _audioFileHandler.Download(fileId, ct);
-
+        
         var session = _memoryStorage.GetSession(message.Chat.Id);
         if (session == null)
         {
@@ -36,12 +42,11 @@ public class VoiceMessageController
             return;
         }
 
-        string userLanguageCode = session.LanguageCode; // Получим язык из сессии пользователя
-
+        string userLanguageCode = session.LanguageCode;
         if (string.IsNullOrWhiteSpace(userLanguageCode))
-            throw new ArgumentNullException(nameof(userLanguageCode), "Код языка не может быть null или пустым."); // Проверка на null или пустую строку
+            throw new ArgumentNullException(nameof(userLanguageCode), "Код языка не может быть null или пустым.");
 
-        var result = _audioFileHandler.Process(userLanguageCode); // Запустим обработку
+        var result = _audioFileHandler.Process(userLanguageCode);
 
         if (string.IsNullOrWhiteSpace(result))
         {

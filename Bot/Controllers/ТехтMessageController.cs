@@ -26,7 +26,10 @@ public class TextMessageController(ITelegramBotClient telegramBotClient)
 
                 // передаем кнопки вместе с сообщением (параметр ReplyMarkup)
                 await _telegramClient.SendTextMessageAsync(message.Chat.Id, $"<b>  Наш бот превращает аудио в текст.</b> {Environment.NewLine}" +
-                    $"{Environment.NewLine}Можно записать сообщение и переслать другу, если лень печатать.{Environment.NewLine}", cancellationToken: ct, parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(buttons));
+                    $"{Environment.NewLine}Можно записать сообщение и переслать другу, если лень печатать.{Environment.NewLine}" + 
+                    $"{Environment.NewLine}Считает количество символов в тексте.{Environment.NewLine}" +
+                    $"{Environment.NewLine}Вычисляет сумму чисел.{Environment.NewLine}" + 
+                    $"{Environment.NewLine}<b>Выберите необходимую опцию в меню.</b> {Environment.NewLine}", cancellationToken: ct, parseMode: ParseMode.Html, replyMarkup: new InlineKeyboardMarkup(buttons));
 
                 break;
             default:
