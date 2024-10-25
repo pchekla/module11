@@ -51,7 +51,7 @@ class Program
         return new AppSettings()
         {
             DownloadsFolder = "/home/user/",
-            BotToken = "7866336182:AAGMkvbMZSk_-ZAeoeL5eBbg-CpUfSELLmc",
+            BotToken = "token",
             AudioFileName = "audio",
             InputAudioFormat = "ogg",
             OutputAudioFormat = "wav", // Новое поле
