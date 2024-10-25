@@ -26,7 +26,7 @@ class Program
     static void ConfigureServices(IServiceCollection services)
     {
         // Регистрируем объект TelegramBotClient c токеном подключения
-        services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient("7439968622:AAFaJdYZV_atsiYsd8N-SJKZYQn-dPkhA1k"));
+        services.AddSingleton<ITelegramBotClient>(provider => new TelegramBotClient(""));
         // Регистрируем постоянно активный сервис бота
         services.AddHostedService<Bot>();
     }
