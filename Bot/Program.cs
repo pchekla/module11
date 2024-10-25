@@ -32,7 +32,8 @@ namespace Bot
         static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
-            services.AddSingleton(appSettings);
+            services.AddSingleton(appSettings ?? throw new InvalidOperationException("AppSettings is not configured"));
+
 
             services.AddSingleton<IStorage, MemoryStorage>();
             services.AddSingleton<IFileHandler, AudioFileHandler>();
