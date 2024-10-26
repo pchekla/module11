@@ -19,12 +19,12 @@
 ```json
 {
     "AppSettings": {
-        "BotToken": "API token",                     // Ваш API токен для Telegram бота
+        "BotToken": "API token",                       // Ваш API токен для Telegram бота
         "DownloadsFolder": "path to downloads folder", // Путь к папке для загрузки файлов
-        "AudioFileName": "audio",                    // Имя файла для сохранения аудио
-        "InputAudioFormat": "ogg",                   // Формат входного аудиофайла
-        "OutputAudioFormat": "wav",                  // Формат выходного аудиофайла
-        "InputAudioBitrate": 48000                   // Битрейт входного аудио
+        "AudioFileName": "audio",                      // Имя файла для сохранения аудио
+        "InputAudioFormat": "ogg",                     // Формат входного аудиофайла
+        "OutputAudioFormat": "wav",                    // Формат выходного аудиофайла
+        "InputAudioBitrate": 48000                     // Битрейт входного аудио
     }
 }
 ```
