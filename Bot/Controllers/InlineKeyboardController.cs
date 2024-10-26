@@ -2,33 +2,62 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Bot.Services;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Controllers;
 
-public class InlineKeyboardController(ITelegramBotClient telegramBotClient, IStorage memoryStorage)
+public class InlineKeyboardController
 {
-    private readonly ITelegramBotClient _telegramClient = telegramBotClient;
-    private readonly IStorage _memoryStorage = memoryStorage;
-            public async Task Handle(CallbackQuery? callbackQuery, CancellationToken ct)
+    private readonly ITelegramBotClient _telegramClient;
+    private readonly IStorage _memoryStorage;
+
+    public InlineKeyboardController(ITelegramBotClient telegramBotClient, IStorage memoryStorage)
+    {
+        _telegramClient = telegramBotClient;
+        _memoryStorage = memoryStorage;
+    }
+
+    public async Task Handle(CallbackQuery? callbackQuery, CancellationToken ct)
+    {
+        if (callbackQuery?.Data == null)
+            return;
+
+        // Получаем сессию пользователя
+        var session = _memoryStorage.GetSession(callbackQuery.From.Id);
+
+        switch (callbackQuery.Data)
         {
-            if (callbackQuery?.Data == null)
-                return;
+            case "char_count":
+                session.SelectedAction = "Подсчитать символы в тексте";
+                await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id, "Отправьте текст для подсчета символов.", cancellationToken: ct);
+                break;
 
-            // Обновление пользовательской сессии новыми данными
-            _memoryStorage.GetSession(callbackQuery.From.Id).LanguageCode = callbackQuery.Data;
+            case "sum_calc":
+                session.SelectedAction = "Вычислить сумму чисел";
+                await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id, "Отправьте текст для вычисления суммы.", cancellationToken: ct);
+                break;
 
-            // Генерим информационное сообщение
-            string languageText = callbackQuery.Data switch
-            {
-                "ru" => " Русский",
-                "en" => " Английский",
-                "fr" => " Французский",
-                _ => String.Empty
-            };
+            case "audio_transcribe":
+                session.SelectedAction = "audio_transcribe";
+                var languageButtons = new List<InlineKeyboardButton[]>
+                {
+                    new[] { InlineKeyboardButton.WithCallbackData(" Русский", "ru"), InlineKeyboardButton.WithCallbackData(" English", "en"), InlineKeyboardButton.WithCallbackData(" Français", "fr") }
+                };
+                await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id, "Выберите язык для расшифровки аудио:", cancellationToken: ct, replyMarkup: new InlineKeyboardMarkup(languageButtons));
+                break;
 
-            // Отправляем в ответ уведомление о выборе
-            await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id,
-                $"<b>Язык аудио - {languageText}.{Environment.NewLine}</b>" +
-                $"{Environment.NewLine}Можно поменять в главном меню.", cancellationToken: ct, parseMode: ParseMode.Html);
+            case "ru":
+            case "en":
+            case "fr":
+                session.LanguageCode = callbackQuery.Data;
+                await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id,
+                    $"<b>Язык аудио - {(callbackQuery.Data == "ru" ? "Русский" : callbackQuery.Data == "en" ? "Английский" : "Французский")}.</b>{Environment.NewLine}Теперь отправьте аудиосообщение для расшифровки.",
+                    cancellationToken: ct, parseMode: ParseMode.Html);
+                break;
+
+            default:
+                await _telegramClient.SendTextMessageAsync(callbackQuery.From.Id, "Неверный выбор. Попробуйте снова.", cancellationToken: ct);
+                break;
         }
+    }
 }
