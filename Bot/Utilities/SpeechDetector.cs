@@ -16,7 +16,9 @@ namespace Bot.Utilities
                 throw new ArgumentNullException(nameof(languageCode), "Код языка не может быть null или пустым."); // Проверка на null или пустую строку
 
             Vosk.Vosk.SetLogLevel(-1);
-            var modelPath = Path.Combine("/home/user/vscode/module11/Speech-models/", $"vosk-model-small-{languageCode.ToLower()}");
+
+            var projectRoot = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+            var modelPath = Path.Combine(projectRoot ?? throw new InvalidOperationException("Project root not found"), "Speech-models", $"vosk-model-small-{languageCode.ToLower()}");
 
             Model model = new(modelPath);
             return GetWords(model, audioPath, inputBitrate);
